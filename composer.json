@@ -1,7 +1,7 @@
 {
     "name": "elaberino/symfony-style-verbose",
     "type": "library",
-    "description": "Add methods to only create output when verbosity flags are set",
+    "description": "Add methods to SymfonyStyle to only create output when verbosity flags are set",
     "keywords": ["symfony style", "verbose", "symfony console", "symfony cli", "symfony command line", "symfony terminal"],
     "require": {
         "php": ">=7.4",
