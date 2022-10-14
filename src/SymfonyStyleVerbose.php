@@ -191,6 +191,6 @@ class SymfonyStyleVerbose extends SymfonyStyle
             return $method->invokeArgs($this, $arguments);
         }
 
-        throw new BadMethodCallException('Method ' . $methodName . ' does not exist');
+        //throw new BadMethodCallException('Method ' . $methodName . ' does not exist');
     }
 }
