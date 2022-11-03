@@ -13,10 +13,10 @@ return static function (RectorConfig $rectorConfig): void {
 
     // register a single rule
     //$rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
-    $rectorConfig->rule(\Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector\ChangeNamespaceRector::class);
+    //$rectorConfig->rule(\Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector\ChangeNamespaceRector::class);
 
     // define sets of rules
-    //    $rectorConfig->sets([
-    //        LevelSetList::UP_TO_PHP_74
-    //    ]);
+    $rectorConfig->sets([
+        \Elaberino\SymfonyStyleVerbose\Utils\Rector\Set\SymfonyStyleVerboseSetList::CHANGE_OUTPUT
+    ]);
 };
