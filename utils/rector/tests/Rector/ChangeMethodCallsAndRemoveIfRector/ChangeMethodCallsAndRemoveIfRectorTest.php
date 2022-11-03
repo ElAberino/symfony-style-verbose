@@ -2,10 +2,14 @@
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests;
 
+use Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector\ChangeMethodCallsAndRemoveIfRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ChangeOutputRectorTest extends AbstractRectorTestCase
+/**
+ * @see ChangeMethodCallsAndRemoveIfRector
+ */
+class ChangeMethodCallsAndRemoveIfRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -17,11 +21,6 @@ class ChangeOutputRectorTest extends AbstractRectorTestCase
 
     public function provideData(): Iterator
     {
-        //var_dump("INI");
-        //var_dump("INI");
-        //var_dump("INI");
-        //var_dump(__DIR__ . '/Fixture');
-
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
