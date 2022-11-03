@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
+use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Expr\MethodCall;
@@ -194,7 +195,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Initialize object of type SymfonyStyleVerbose instead of SymfonyStyle', [
+            'Removes if statments e.g. with isVerbose() and renames SymfonyStyle methods to e.g. title() to titleIsVerbose', [
                 new ConfiguredCodeSample(
                     // code before
                     <<<'CODE_SAMPLE'
@@ -233,6 +234,12 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     public function configure(array $configuration) : void
     {
         if (!empty($configuration)) {
+            if (!is_int($configuration[0])) {
+                throw new InvalidArgumentException('Argument should be an integer');
+            }
+            if (count(array_values($configuration)) > 1) {
+                throw new InvalidArgumentException('Only one value allowed');
+            }
             $this->verboseCallsThreshold = $configuration[0];
         }
     }

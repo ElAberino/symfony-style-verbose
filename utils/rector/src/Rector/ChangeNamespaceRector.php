@@ -53,12 +53,12 @@ final class ChangeNamespaceRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Initialize object of type SymfonyStyleVerbose instead of SymfonyStyle', [
+            'Replace namespace of SymfonyStyle with the one of SymfonyStyleVerbose', [
                 new CodeSample(
                 // code before
-                    '$io = new SymfonyStyle($input, $output);',
+                    'use Symfony\Component\Console\Style\SymfonyStyle;',
                     // code after
-                    '$io = new SymfonyStyleVerbose($input, $output)'
+                    'use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;'
                 ),
             ]
         );
