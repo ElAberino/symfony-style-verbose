@@ -45,7 +45,7 @@
         "ssv:phpmd-tests": "phpmd tests ansi phpmd.xml",
         "ssv:phpmd": [
             "@ssv:phpmd-general",
-            "@ssv:phpmd-rector",
+            "@ssv:phpmd-utils",
             "@ssv:phpmd-tests"
         ],
         "ssv:ecs": "vendor/bin/ecs check",
