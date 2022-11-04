@@ -171,9 +171,11 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                 ++$amountMethodCalls;
             }
         }
+        
         if ($amountSymfonyStyleMethodCalls > $this->verboseCallsThreshold) {
             return true;
         }
+        
         if ($amountSymfonyStyleMethodCalls != $amountMethodCalls) {
             return true;
         }

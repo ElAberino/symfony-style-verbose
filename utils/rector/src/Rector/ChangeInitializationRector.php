@@ -48,9 +48,11 @@ final class ChangeInitializationRector extends AbstractRector
         if (!$this->isName($new->class, SymfonyStyle::class)) {
             return true;
         }
+        
         if (!isset($new->args[0])) {
             return true;
         }
+        
         if (!isset($new->args[1])) {
             return true;
         }
@@ -59,6 +61,7 @@ final class ChangeInitializationRector extends AbstractRector
         if (!$firstArg instanceof Arg) {
             return true;
         }
+        
         $secondArg = $new->args[0];
         if (!$secondArg instanceof Arg) {
             return true;

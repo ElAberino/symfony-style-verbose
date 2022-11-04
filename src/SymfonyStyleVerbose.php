@@ -139,6 +139,7 @@ final class SymfonyStyleVerbose extends SymfonyStyle
     ];
 
     private OutputInterface $output;
+    
     private ReflectionClass $symfonyStyleReflection;
 
     public function __construct(InputInterface $input, OutputInterface $output)

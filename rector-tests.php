@@ -3,16 +3,12 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Core\Configuration\Option;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Php74\Rector\Property\TypedPropertyRector;
-use Rector\Php80\Rector\Class_\AnnotationToAttributeRector;
-use Rector\Php80\Rector\Class_\DoctrineAnnotationClassToAttributeRector;
-use Rector\Php80\ValueObject\AnnotationToAttribute;
+use Rector\PHPUnit\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\PostRector\Rector\NameImportingPostRector;
-use Rector\Privatization\Rector\Class_\ChangeReadOnlyVariableWithDefaultValueToConstantRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 
@@ -20,6 +16,10 @@ return static function (RectorConfig $rectorConfig): void {
     // paths to refactor; solid alternative to CLI arguments
     $rectorConfig->paths([
         __DIR__ . '/tests', __DIR__ . '/utils/rector/tests',
+    ]);
+
+    $rectorConfig->skip([
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class
     ]);
 
     $rectorConfig->importNames();

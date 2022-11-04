@@ -11,11 +11,11 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SymfonyStyleVerboseTest extends TestCase
+final class SymfonyStyleVerboseTest extends TestCase
 {
     private array $testMethods;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->testMethods = [
             'block'             => ['messages' => ['This is a block message', 'This is also a block message']],
