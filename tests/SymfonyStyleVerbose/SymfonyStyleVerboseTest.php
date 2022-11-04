@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SymfonyStyleVerboseTest extends TestCase
 {
     /** @var array<string, array<int|string, array<int|string, array<int, string>|string>|int|string>>>>  */
-    private array $testMethods;
+    private array $testMethods = [];
 
     protected function setUp(): void
     {

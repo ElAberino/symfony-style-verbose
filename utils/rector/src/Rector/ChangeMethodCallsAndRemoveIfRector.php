@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
+use PhpParser\Node\Identifier;
 use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
 use InvalidArgumentException;
@@ -89,7 +90,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                     $method = $stmt->cond;
                     $methodName = '';
 
-                    if ($method->name instanceof Node\Identifier) {
+                    if ($method->name instanceof Identifier) {
                         $methodName = $method->name->toString();
                     }
 
@@ -184,7 +185,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromNode($methodCall);
                 if ($variableName === $symfonyStyleVariable) {
-                    if ($methodCall->name instanceof Node\Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
+                    if ($methodCall->name instanceof Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
                         ++$amountSymfonyStyleMethodCalls;
                     }
                 }
@@ -218,7 +219,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromNode($methodCall);
                 if ($variableName === $symfonyStyleVariable) {
-                    if ($methodCall->name instanceof Node\Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
+                    if ($methodCall->name instanceof Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
                         $methodCall->name->name = $methodCall->name->name . 'If' . $verbosityLevel;
                     }
                 }
@@ -241,11 +242,16 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
 
     private function getVariableNameFromNode(Node $node): ?string
     {
-        if (property_exists($node, 'var') && $node->var instanceof Variable && is_string($node->var->name)) {
-            return $node->var->name;
+        if (!property_exists($node, 'var')) {
+            return null;
         }
-
-        return null;
+        if (!$node->var instanceof Variable) {
+            return null;
+        }
+        if (!is_string($node->var->name)) {
+            return null;
+        }
+        return $node->var->name;
     }
 
     private function shouldSkip(Node $node): bool
