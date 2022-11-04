@@ -14,11 +14,14 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Param;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -88,11 +91,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                 if ($stmt instanceof If_ && $stmt->cond instanceof MethodCall) {
                     /** @var MethodCall $method */
                     $method = $stmt->cond;
-                    $methodName = '';
-
-                    if ($method->name instanceof Identifier) {
-                        $methodName = $method->name->toString();
-                    }
+                    $methodName = (string) $this->getNameFromMethodCall($method);
 
                     if ($this->isVerboseMethod($methodName) && !$this->isThresholdExceeded($stmt, $symfonyStyleVariable)) {
                         $verbosityLevel = $this->getVerbosityLevelByMethodName($methodName);
@@ -115,6 +114,15 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         }
     }
 
+    private function getNameFromMethodCall(MethodCall $methodCall): ?string
+    {
+        if ($methodCall->name instanceof Identifier) {
+            return $methodCall->name->toString();
+        }
+
+        return null;
+    }
+
     private function isVerboseMethod(string $methodName): bool
     {
         return in_array($methodName, self::VERBOSITY_METHODS);
@@ -125,30 +133,33 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         return substr($methodName, 2);
     }
 
-    private function findSymfonyStyleVariable(ClassMethod $classMethod): ?string //TODO: Check for symfony style class attribute
+    /**
+     * @param Param[] $params
+     */
+    private function findSymfonyStyleVariableInClassParameters(array $params): ?string
     {
-        $params = $classMethod->getParams();
-
         foreach ($params as $param) { //Check if one of the method attributes is a symfony style objects
-            /** @var Node\Param $param */
-            /** @var Node\Identifier $type */
+            /** @var Identifier $type */
             $type = $param->type;
             if ($this->isStringFullyQualifiedSymfonyStyle($type->toString())) {
                 return $this->getVariableNameFromNode($param);
             }
         }
 
-        $stmts = $classMethod->getStmts();
-        if (empty($stmts)) {
-            return null;
-        }
+        return null;
+    }
 
+    /**
+     * @param Stmt[] $stmts
+     */
+    private function findSymfonyStyleVariableInMethod(array $stmts): ?string
+    {
         foreach ($stmts as $stmt) {  //Check if a symfony style object is created within the method
             /** @var Expression $stmt */
             if ($stmt instanceof Expression && $stmt->expr instanceof Assign && $stmt->expr->expr instanceof New_) {
                 /** @var Assign $assign */
                 $assign = $stmt->expr;
-                /** @var Node\Name\FullyQualified $classFullyQualified */
+                /** @var FullyQualified $classFullyQualified */
                 $classFullyQualified = $stmt->expr->expr->class;
                 if ($this->isStringFullyQualifiedSymfonyStyle($classFullyQualified->toString())) {
                     /** @var Variable $variable */
@@ -164,6 +175,23 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         }
 
         return null;
+    }
+
+    private function findSymfonyStyleVariable(ClassMethod $classMethod): ?string //TODO: Check for symfony style class attribute
+    {
+        $params = $classMethod->getParams();
+        $symfonyStyleVariable = $this->findSymfonyStyleVariableInClassParameters($params);
+
+        if ($symfonyStyleVariable !== null) {
+            return $symfonyStyleVariable;
+        }
+
+        $stmts = $classMethod->getStmts();
+        if (empty($stmts)) {
+            return null;
+        }
+
+        return $this->findSymfonyStyleVariableInMethod($stmts);
     }
 
     private function isStringFullyQualifiedSymfonyStyle(string $string): bool
