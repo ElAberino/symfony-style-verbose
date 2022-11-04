@@ -24,6 +24,8 @@ use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Nop;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -48,7 +50,19 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     /** @var string[] */
     private const VERBOSITY_METHODS = ['isVerbose', 'isVeryVerbose', 'isDebug'];
 
+    /** @var array<int, string>  */
+    private array $allowedMethods = [];
+
     private int $verboseCallsThreshold = 2;
+
+    public function __construct()
+    {
+        $output = new ConsoleOutput();
+        $input = new ArrayInput([]);
+        $io = new SymfonyStyleVerbose($input, $output);
+        $this->allowedMethods = $io->getAllowedMethods();
+    }
+
 
     /**
      * @return array<class-string<Node>>
@@ -203,6 +217,11 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         return false;
     }
 
+    private function isMethodRenamingAllowed(string $methodName): bool
+    {
+        return in_array($methodName, $this->allowedMethods);
+    }
+
     private function isThresholdExceeded(If_ $node, string $symfonyStyleVariable = 'io'): bool
     {
         $amountSymfonyStyleMethodCalls = 0;
@@ -213,7 +232,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromNode($methodCall);
                 if ($variableName === $symfonyStyleVariable) {
-                    if ($methodCall->name instanceof Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
+                    if ($methodCall->name instanceof Identifier && $this->isMethodRenamingAllowed($methodCall->name->name)) {
                         ++$amountSymfonyStyleMethodCalls;
                     }
                 }
@@ -247,7 +266,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromNode($methodCall);
                 if ($variableName === $symfonyStyleVariable) {
-                    if ($methodCall->name instanceof Identifier && $methodCall->name->name) { //TODO: Check if method is on list of allowed methods
+                    if ($methodCall->name instanceof Identifier && $this->isMethodRenamingAllowed($methodCall->name->name)) {
                         $methodCall->name->name = $methodCall->name->name . 'If' . $verbosityLevel;
                     }
                 }
