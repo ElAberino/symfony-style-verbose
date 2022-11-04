@@ -81,6 +81,6 @@ class SymfonyStyleVerboseTest extends TestCase
         $io->{'notExistingMethod' . SymfonyStyleVerbose::METHOD_SUFFIX[$verbosityLevel]}('Text');
 
         $this->expectException(BadMethodCallException::class);
-        $io->notExistingMethod('TITLE');
+        $io->notExistingMethod('TITLE'); /** @phpstan-ignore-line */
     }
 }

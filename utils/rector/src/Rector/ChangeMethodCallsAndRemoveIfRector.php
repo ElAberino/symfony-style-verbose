@@ -3,10 +3,15 @@ declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
+use ECSPrefix202210\Symfony\Component\Config\Builder\Method;
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
 use InvalidArgumentException;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Stmt\If_;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -50,7 +55,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         }
 
         foreach($node->stmts as $stmt) {
-            if ($stmt->getType() === 'Stmt_ClassMethod') { //handle methods
+            if ($stmt instanceof ClassMethod) { //handle methods
                 $symfonyStyleVariable = $this->findSymfonyStyleVariable($stmt);
                 if ($symfonyStyleVariable) {
                     $this->removeIfAndRenameMethodCalls($stmt, $symfonyStyleVariable);
@@ -113,12 +118,14 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
 
         $stmts = $classMethod->getStmts();
         foreach ($stmts as $stmt) {  //Check if a symfony style object is created within the method
-            /** @var Node\Stmt\Expression $stmt */
-            /** @var Node\Expr\Assign $stmt->expr */
-            /** @var Node\Expr\New_ $stmt->expr->expr */
-            if ($stmt->getType() === 'Stmt_Expression' && $stmt->expr->getType() === 'Expr_Assign' && $stmt->expr->expr->getType() === 'Expr_New') {
+            /** @var Expression $stmt */
+            if ($stmt instanceof Expression && $stmt->expr instanceof Assign && $stmt->expr->expr instanceof New_) {
+                /** @var Assign $assign */
+                $assign = $stmt->expr;
                 if ($this->isStringFullyQualifiedSymfonyStyle($stmt->expr->expr->class->toString())) {
-                    return $stmt->expr->var->name;
+                    /** @var Variable $variable */
+                    $variable = $assign->var;
+                    return $variable->name;
                 }
             }
         }
@@ -139,12 +146,12 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     {
         $amountSymfonyStyleMethodCalls = 0;
         $amountMethodCalls = 0;
-        /** @var Node\Stmt\Expression $stmt */
+        /** @var Expression $stmt */
         foreach($node->stmts as $stmt) {
-            if ($stmt->expr instanceof MethodCall) {
-                /** @var MethodCall $methodCall */
-                $methodCall = $stmt->expr;
-                if ($methodCall->var->name === $symfonyStyleVariable) { //Expr_Variable
+            $methodCall = $this->getMethodCallFromExpression($stmt);
+            if ($methodCall !== null) {
+                $variableName = $this->getVariableNameFromMethodCall($methodCall);
+                if ($variableName === $symfonyStyleVariable) {
                     if ($methodCall->name->name) { //TODO: Check if method is on list of allowed methods
                         ++$amountSymfonyStyleMethodCalls;
                     }
@@ -162,13 +169,18 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         return false;
     }
 
+    /**
+     * @return array<int, Node\Stmt>
+     */
     private function getModifiedChildNodes(If_ $node, string $symfonyStyleVariable = 'io', string $verbosityLevel = 'Verbose'): array
     {
         $nodes = [];
+        /** @var Expression $stmt */
         foreach($node->stmts as $stmt) {
-            if ($stmt->expr instanceof MethodCall) {
-                $methodCall = $stmt->expr;
-                if ($methodCall->var->name === $symfonyStyleVariable) { //Expr_Variable
+            $methodCall = $this->getMethodCallFromExpression($stmt);
+            if ($methodCall !== null) {
+                $variableName = $this->getVariableNameFromMethodCall($methodCall);
+                if ($variableName === $symfonyStyleVariable) {
                     if ($methodCall->name->name) { //TODO: Check if method is on list of allowed methods
                         $methodCall->name->name = $methodCall->name->name.'If' . $verbosityLevel;
                     }
@@ -178,6 +190,24 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         }
 
         return $nodes;
+    }
+
+    private function getMethodCallFromExpression(Expression $expression): ?MethodCall
+    {
+        if ($expression->expr instanceof MethodCall) {
+            return $expression->expr;
+        }
+
+        return null;
+    }
+
+    private function getVariableNameFromMethodCall(MethodCall $methodCall): ?string
+    {
+        if ($methodCall->var instanceof Variable) {
+            return $methodCall->var->name;
+        }
+
+        return null;
     }
 
     private function shouldSkip(Node $node): bool

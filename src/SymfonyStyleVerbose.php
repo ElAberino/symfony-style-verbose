@@ -137,13 +137,11 @@ class SymfonyStyleVerbose extends SymfonyStyle
         OutputInterface::VERBOSITY_DEBUG => 'IfDebug',
     ];
 
-    private InputInterface $input;
     private OutputInterface $output;
     private ReflectionClass $symfonyStyleReflection;
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
         $this->output = $output;
 
         $this->symfonyStyleReflection = new ReflectionClass(SymfonyStyle::class);
@@ -151,6 +149,9 @@ class SymfonyStyleVerbose extends SymfonyStyle
         parent::__construct($input, $output);
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getAllowedMethods(): array
     {
         $allowedMethods = [];
@@ -173,7 +174,10 @@ class SymfonyStyleVerbose extends SymfonyStyle
         return $this->symfonyStyleReflection->getMethod($baseMethodName);
     }
 
-    public function __call($methodName, $arguments)
+    /**
+     * @param array<int, string|int|float|bool|null|array<int, string|int|float|bool|null>> $arguments
+     */
+    public function __call(string $methodName, array $arguments): void
     {
         if (str_ends_with($methodName, self::METHOD_SUFFIX[self::VERBOSITY_VERBOSE]) && $this->output->isVerbose()) {
             $method = $this->getBaseMethod($methodName, self::METHOD_SUFFIX[self::VERBOSITY_VERBOSE]);
@@ -188,7 +192,7 @@ class SymfonyStyleVerbose extends SymfonyStyle
         }
 
         if (isset($method)) {
-            return $method->invokeArgs($this, $arguments);
+            $method->invokeArgs($this, $arguments);
         }
 
         //throw new BadMethodCallException('Method ' . $methodName . ' does not exist');
