@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class SymfonyStyleVerboseTest extends TestCase
 {
+    /** @var array<string, array<int|string, array<int|string, array<int, string>|string>|int|string>>>>  */
     private array $testMethods;
 
     protected function setUp(): void
@@ -117,8 +118,9 @@ final class SymfonyStyleVerboseTest extends TestCase
 
         $allowedMethods = $io->getAllowedMethods();
         foreach ($this->testMethods as $method => $arguments) {
-            if (in_array($method, $allowedMethods)) {
-                call_user_func_array([$io, $method . SymfonyStyleVerbose::METHOD_SUFFIX[$verbosityLevel]], $arguments);
+            $callback = [$io, $method . SymfonyStyleVerbose::METHOD_SUFFIX[$verbosityLevel]];
+            if (in_array($method, $allowedMethods) && is_callable($callback)) {
+                call_user_func_array($callback, $arguments);
                 $this->addToAssertionCount(1);
             }
         }
