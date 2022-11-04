@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
-use PhpParser\Node\Identifier;
 use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
 use InvalidArgumentException;
@@ -14,14 +13,15 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Nop;
-use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Param;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -273,12 +273,15 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         if (!property_exists($node, 'var')) {
             return null;
         }
+
         if (!$node->var instanceof Variable) {
             return null;
         }
+
         if (!is_string($node->var->name)) {
             return null;
         }
+
         return $node->var->name;
     }
 
