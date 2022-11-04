@@ -5,7 +5,7 @@ namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ChangeInitializationRectorTest extends AbstractRectorTestCase
+final class ChangeInitializationRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -17,11 +17,6 @@ class ChangeInitializationRectorTest extends AbstractRectorTestCase
 
     public function provideData(): Iterator
     {
-        //var_dump("INI");
-        //var_dump("INI");
-        //var_dump("INI");
-        //var_dump(__DIR__ . '/Fixture');
-
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 

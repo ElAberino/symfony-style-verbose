@@ -6,7 +6,7 @@ use Elaberino\SymfonyStyleVerbose\Utils\Rector\Set\SymfonyStyleVerboseSetList;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ChangeOutputSetListTest extends AbstractRectorTestCase
+final class ChangeOutputSetListTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()

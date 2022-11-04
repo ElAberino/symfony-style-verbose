@@ -129,8 +129,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @method createTableIfDebug()
  *
  */
-class SymfonyStyleVerbose extends SymfonyStyle
+final class SymfonyStyleVerbose extends SymfonyStyle
 {
+    /** @var array<int, string> */
     public const METHOD_SUFFIX = [
         OutputInterface::VERBOSITY_VERBOSE => 'IfVerbose',
         OutputInterface::VERBOSITY_VERY_VERBOSE => 'IfVeryVerbose',

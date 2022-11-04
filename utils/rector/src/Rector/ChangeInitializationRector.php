@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Expr\New_;
@@ -32,10 +33,6 @@ final class ChangeInitializationRector extends AbstractRector
             return null;
         }
 
-        //var_dump('HOOOOOOOOOOOOOOO');
-        //$nodeClassString = $node->class->toString();
-        //var_dump($nodeClassString);
-
         $class = new Name('SymfonyStyleVerbose');
 
         return new New_($class, $node->args);
@@ -48,17 +45,22 @@ final class ChangeInitializationRector extends AbstractRector
         }
 
         //if (!$this->isName($new->class, '*\SymfonyStyle')) {
-        if (!$this->isName($new->class, 'Symfony\Component\Console\Style\SymfonyStyle')) {
+        if (!$this->isName($new->class, SymfonyStyle::class)) {
             return true;
         }
-
-        if (!isset($new->args[0]) || !isset($new->args[1])) {
+        if (!isset($new->args[0])) {
+            return true;
+        }
+        if (!isset($new->args[1])) {
             return true;
         }
 
         $firstArg = $new->args[0];
+        if (!$firstArg instanceof Arg) {
+            return true;
+        }
         $secondArg = $new->args[0];
-        if (!$firstArg instanceof Arg || !$secondArg instanceof Arg) {
+        if (!$secondArg instanceof Arg) {
             return true;
         }
 

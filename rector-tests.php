@@ -19,23 +19,8 @@ use Rector\Set\ValueObject\SetList;
 return static function (RectorConfig $rectorConfig): void {
     // paths to refactor; solid alternative to CLI arguments
     $rectorConfig->paths([
-        __DIR__ . '/tests', __DIR__ . '/utils/tests',
+        __DIR__ . '/tests', __DIR__ . '/utils/rector/tests',
     ]);
-
-    /*$rectorConfig->skip([
-        __DIR__ . '/tests/Api/AuthTest.php',
-        __DIR__ . '/tests/Api/InvoiceTest.php',
-        __DIR__ . '/tests/DbsApiTestCase.php',
-        ChangeReadOnlyVariableWithDefaultValueToConstantRector::class => [
-            __DIR__ . '/tests/Service/PaymentWarning/MagentoPaymentWarningServiceTest.php',
-        ],
-    ]);*/
-
-    /*$rectorConfig->bootstrapFiles([
-            //__DIR__ . '/vendor/bin/.phpunit/phpunit/vendor/autoload.php', //symlink
-            //__DIR__ . '/bin/.phpunit/phpunit/vendor/autoload.php', //symlink
-            //__DIR__ . '/vendor/symfony/framework-bundle/Test/KernelTestCase.php',
-    ]);*/
 
     $rectorConfig->importNames();
     $rectorConfig->parallel();

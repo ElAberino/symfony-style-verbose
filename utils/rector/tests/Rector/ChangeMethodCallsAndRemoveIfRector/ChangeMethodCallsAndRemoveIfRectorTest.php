@@ -9,7 +9,7 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 /**
  * @see ChangeMethodCallsAndRemoveIfRector
  */
-class ChangeMethodCallsAndRemoveIfRectorTest extends AbstractRectorTestCase
+final class ChangeMethodCallsAndRemoveIfRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()

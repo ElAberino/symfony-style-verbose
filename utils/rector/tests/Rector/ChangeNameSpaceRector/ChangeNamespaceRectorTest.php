@@ -5,7 +5,7 @@ namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ChangeNamespaceRectorTest extends AbstractRectorTestCase
+final class ChangeNamespaceRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -17,11 +17,6 @@ class ChangeNamespaceRectorTest extends AbstractRectorTestCase
 
     public function provideData(): Iterator
     {
-        //var_dump("NAMESPACE");
-        //var_dump("NAMESPACE");
-        //var_dump("NAMESPACE");
-        //var_dump(__DIR__ . '/Fixture');
-
         return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 

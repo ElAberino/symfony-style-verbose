@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
-use ECSPrefix202210\Symfony\Component\Config\Builder\Method;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;
+use PhpParser\Node\Stmt\Nop;
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
 use InvalidArgumentException;
 use PhpParser\Node;
@@ -25,12 +27,19 @@ use PhpParser\Node\Stmt\Class_;
  */
 final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /** @var class-string<SymfonyStyle> */
     private const SYMFONY_STYLE_FULLY_QUALIFIED = 'Symfony\Component\Console\Style\SymfonyStyle';
+    
+    /** @var class-string<SymfonyStyleVerbose> */
     private const SYMFONY_STYLE_VERBOSE_FULLY_QUALIFIED = 'Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose';
+    
+    /** @var class-string<SymfonyStyle>[] */
     private const FULLY_QUALIFIED = [
         self::SYMFONY_STYLE_FULLY_QUALIFIED,
         self::SYMFONY_STYLE_VERBOSE_FULLY_QUALIFIED
     ];
+    
+    /** @var string[] */
     private const VERBOSITY_METHODS = ['isVerbose', 'isVeryVerbose', 'isDebug'];
 
     private int $verboseCallsThreshold = 2;
@@ -82,9 +91,10 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                     $modifiedChildNodes = $this->getModifiedChildNodes($stmt, $symfonyStyleVariable, $verbosityLevel);
                     unset($stmt);
                     if ($key > 0) { //if statement is not the first in the method, add a blank line
-                        $nodes[] = new Node\Stmt\Nop([]);
+                        $nodes[] = new Nop([]);
                     }
-                    $nodes = array_merge($nodes, $modifiedChildNodes);
+                    
+                    $nodes = [...$nodes, ...$modifiedChildNodes];
 
                 }
             }
@@ -93,6 +103,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                 $nodes[] = $stmt;
             }
         }
+        
         $classMethod->stmts = $nodes;
     }
 
@@ -156,11 +167,14 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                         ++$amountSymfonyStyleMethodCalls;
                     }
                 }
+                
                 ++$amountMethodCalls;
             }
         }
-
-        if ($amountSymfonyStyleMethodCalls > $this->verboseCallsThreshold || $amountSymfonyStyleMethodCalls != $amountMethodCalls) {
+        if ($amountSymfonyStyleMethodCalls > $this->verboseCallsThreshold) {
+            return true;
+        }
+        if ($amountSymfonyStyleMethodCalls != $amountMethodCalls) {
             return true;
         }
 
@@ -186,6 +200,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                     }
                 }
             }
+            
             $nodes[] = $stmt;
         }
 
@@ -267,9 +282,11 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             if (!is_int($configuration[0])) {
                 throw new InvalidArgumentException('Argument should be an integer');
             }
+            
             if (count(array_values($configuration)) > 1) {
                 throw new InvalidArgumentException('Only one value allowed');
             }
+            
             $this->verboseCallsThreshold = $configuration[0];
         }
     }
