@@ -1,26 +1,27 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;
-use PhpParser\Node\Stmt\Nop;
 use Elaberino\SymfonyStyleVerbose\Utils\Rector\Tests\ChangeMethodCallsAndRemoveIfRectorTest;
 use InvalidArgumentException;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Stmt\If_;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\If_;
+use PhpParser\Node\Stmt\Nop;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Class_;
 
 /**
  * @see ChangeMethodCallsAndRemoveIfRectorTest
@@ -36,7 +37,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     /** @var class-string<SymfonyStyle>[] */
     private const FULLY_QUALIFIED = [
         self::SYMFONY_STYLE_FULLY_QUALIFIED,
-        self::SYMFONY_STYLE_VERBOSE_FULLY_QUALIFIED
+        self::SYMFONY_STYLE_VERBOSE_FULLY_QUALIFIED,
     ];
     
     /** @var string[] */
@@ -63,7 +64,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
             return null;
         }
 
-        foreach($node->stmts as $stmt) {
+        foreach ($node->stmts as $stmt) {
             if ($stmt instanceof ClassMethod) { //handle methods
                 $symfonyStyleVariable = $this->findSymfonyStyleVariable($stmt);
                 if ($symfonyStyleVariable) {
@@ -95,7 +96,6 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
                     }
                     
                     $nodes = [...$nodes, ...$modifiedChildNodes];
-
                 }
             }
 
@@ -158,7 +158,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         $amountSymfonyStyleMethodCalls = 0;
         $amountMethodCalls = 0;
         /** @var Expression $stmt */
-        foreach($node->stmts as $stmt) {
+        foreach ($node->stmts as $stmt) {
             $methodCall = $this->getMethodCallFromExpression($stmt);
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromMethodCall($methodCall);
@@ -192,13 +192,13 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     {
         $nodes = [];
         /** @var Expression $stmt */
-        foreach($node->stmts as $stmt) {
+        foreach ($node->stmts as $stmt) {
             $methodCall = $this->getMethodCallFromExpression($stmt);
             if ($methodCall !== null) {
                 $variableName = $this->getVariableNameFromMethodCall($methodCall);
                 if ($variableName === $symfonyStyleVariable) {
                     if ($methodCall->name->name) { //TODO: Check if method is on list of allowed methods
-                        $methodCall->name->name = $methodCall->name->name.'If' . $verbosityLevel;
+                        $methodCall->name->name = $methodCall->name->name . 'If' . $verbosityLevel;
                     }
                 }
             }
@@ -242,7 +242,8 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Removes if statments e.g. with isVerbose() and renames SymfonyStyle methods to e.g. title() to titleIsVerbose', [
+            'Removes if statments e.g. with isVerbose() and renames SymfonyStyle methods to e.g. title() to titleIsVerbose',
+            [
                 new ConfiguredCodeSample(
                     // code before
                     <<<'CODE_SAMPLE'
@@ -278,7 +279,7 @@ final class ChangeMethodCallsAndRemoveIfRector extends AbstractRector implements
         );
     }
 
-    public function configure(array $configuration) : void
+    public function configure(array $configuration): void
     {
         if (!empty($configuration)) {
             if (!is_int($configuration[0])) {

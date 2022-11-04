@@ -18,27 +18,73 @@ final class SymfonyStyleVerboseTest extends TestCase
     protected function setUp(): void
     {
         $this->testMethods = [
-            'block'             => ['messages' => ['This is a block message', 'This is also a block message']],
-            'title'             => ['message'  => 'This is a title'],
-            'section'           => ['message'  => 'This is a section'],
-            'listing'           => ['elements' => ['element 1', 'element 2', 'element 3']],
-            'text'              => ['message'  => 'This is a text'],
-            'comment'           => ['message'  => 'This is a comment'],
-            'success'           => ['message'  => 'This is a success message'],
-            'error'             => ['message'  => 'This is an error'],
-            'warning'           => ['message'  => 'This is a warning'],
-            'note'              => ['message'  => 'This is a note'],
-            'info'              => ['message'  => 'This is an info'],
-            'caution'           => ['message'  => 'This is a caution'],
-            'table'             => ['headers'  => ['header 1', 'header 2'], 'rows' => [['row 1', 'row 1', 'row 1'], ['row 2', 'row 2', 'row 2']]],
-            'horizontalTable'   => ['headers'  => ['header 1', 'header 2'], 'rows' => [['row 1', 'row 2'], ['row 1', 'row 2']]],
-            'definitionList'    => [['key1' => 'value1'], ['key2' => 'value2'], ['key3' => 'value3']],
-            'progressStart'     => ['max'      => 50],
-            'progressAdvance'   => ['step'     => 2],
-            'progressFinish'    => [],
-            'writeln'           => ['messages'  => 'This is writeln'],
-            'write'             => ['messages'  => 'This is write'],
-            'newLine'           => ['count'     => 5],
+            'block' => [
+                'messages' => ['This is a block message', 'This is also a block message'],
+            ],
+            'title' => [
+                'message' => 'This is a title',
+            ],
+            'section' => [
+                'message' => 'This is a section',
+            ],
+            'listing' => [
+                'elements' => ['element 1', 'element 2', 'element 3'],
+            ],
+            'text' => [
+                'message' => 'This is a text',
+            ],
+            'comment' => [
+                'message' => 'This is a comment',
+            ],
+            'success' => [
+                'message' => 'This is a success message',
+            ],
+            'error' => [
+                'message' => 'This is an error',
+            ],
+            'warning' => [
+                'message' => 'This is a warning',
+            ],
+            'note' => [
+                'message' => 'This is a note',
+            ],
+            'info' => [
+                'message' => 'This is an info',
+            ],
+            'caution' => [
+                'message' => 'This is a caution',
+            ],
+            'table' => [
+                'headers' => ['header 1', 'header 2'],
+                'rows'    => [['row 1', 'row 1', 'row 1'], ['row 2', 'row 2', 'row 2']],
+            ],
+            'horizontalTable' => [
+                'headers' => ['header 1', 'header 2'],
+                'rows'    => [['row 1', 'row 2'], ['row 1', 'row 2']],
+            ],
+            'definitionList' => [[
+                'key1' => 'value1',
+            ], [
+                'key2' => 'value2',
+            ], [
+                'key3' => 'value3',
+            ]],
+            'progressStart' => [
+                'max' => 50,
+            ],
+            'progressAdvance' => [
+                'step' => 2,
+            ],
+            'progressFinish' => [],
+            'writeln'        => [
+                'messages' => 'This is writeln',
+            ],
+            'write' => [
+                'messages' => 'This is write',
+            ],
+            'newLine' => [
+                'count' => 5,
+            ],
         ];
     }
 

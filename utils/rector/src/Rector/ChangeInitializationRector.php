@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
 use PhpParser\Node;
-use PhpParser\Node\Name;
-use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Name;
 use Rector\Core\Rector\AbstractRector;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -77,9 +78,10 @@ final class ChangeInitializationRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Initialize object of type SymfonyStyleVerbose instead of SymfonyStyle', [
+            'Initialize object of type SymfonyStyleVerbose instead of SymfonyStyle',
+            [
                 new CodeSample(
-                // code before
+                    // code before
                     '$io = new SymfonyStyle($input, $output);',
                     // code after
                     '$io = new SymfonyStyleVerbose($input, $output)'

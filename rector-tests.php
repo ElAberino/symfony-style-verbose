@@ -19,7 +19,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->skip([
-        AddDoesNotPerformAssertionToNonAssertingTestRector::class
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class,
     ]);
 
     $rectorConfig->importNames();

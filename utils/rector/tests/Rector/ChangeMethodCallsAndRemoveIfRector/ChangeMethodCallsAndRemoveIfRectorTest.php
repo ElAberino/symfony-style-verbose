@@ -13,7 +13,6 @@ final class ChangeMethodCallsAndRemoveIfRectorTest extends AbstractRectorTestCas
 {
     /**
      * @dataProvider provideData()
-     * @doesNotPerformAssertions
      */
     public function test(string $filePath): void
     {

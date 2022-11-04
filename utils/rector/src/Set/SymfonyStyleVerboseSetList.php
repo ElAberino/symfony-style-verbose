@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Set;
 
 use Rector\Set\Contract\SetListInterface;

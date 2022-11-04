@@ -133,9 +133,9 @@ final class SymfonyStyleVerbose extends SymfonyStyle
 {
     /** @var array<int, string> */
     public const METHOD_SUFFIX = [
-        OutputInterface::VERBOSITY_VERBOSE => 'IfVerbose',
+        OutputInterface::VERBOSITY_VERBOSE      => 'IfVerbose',
         OutputInterface::VERBOSITY_VERY_VERBOSE => 'IfVeryVerbose',
-        OutputInterface::VERBOSITY_DEBUG => 'IfDebug',
+        OutputInterface::VERBOSITY_DEBUG        => 'IfDebug',
     ];
 
     private OutputInterface $output;

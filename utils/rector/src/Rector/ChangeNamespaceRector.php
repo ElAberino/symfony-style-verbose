@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Elaberino\SymfonyStyleVerbose\Utils\Rector\Rector;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-use PhpParser\Node\Stmt\UseUse;
 use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\Stmt\UseUse;
 use Rector\Core\Rector\AbstractRector;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -50,9 +51,10 @@ final class ChangeNamespaceRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Replace namespace of SymfonyStyle with the one of SymfonyStyleVerbose', [
+            'Replace namespace of SymfonyStyle with the one of SymfonyStyleVerbose',
+            [
                 new CodeSample(
-                // code before
+                    // code before
                     'use Symfony\Component\Console\Style\SymfonyStyle;',
                     // code after
                     'use Elaberino\SymfonyStyleVerbose\SymfonyStyleVerbose;'
